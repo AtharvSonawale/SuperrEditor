@@ -1,6 +1,6 @@
 export default function HeroSection() {
   return (
-    <section className="pt-32 text-center px-6 max-w-4xl mx-auto">
+    <section className="pt-32 text-center px-6 max-w-4xl mx-auto bg-card">
       <h1 className="text-5xl font-extrabold tracking-tight text-white drop-shadow-lg">
         Elevate Your Images Instantly
       </h1>

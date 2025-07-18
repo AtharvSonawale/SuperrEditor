@@ -6,9 +6,9 @@ export default function HomePage() {
   return (
     <>
       <HomeTopBar />
-      <section className="h-[calc(100vh-56px)] flex flex-col items-center justify-center text-center px-4">
+      <section className="h-[calc(100vh-56px)] flex flex-col items-center bg-card justify-center text-center px-4">
         <h1 className="text-5xl font-bold mb-4">Edit Photos in Your Browser</h1>
-        <p className="text-lg text-muted-foreground mb-6">
+        <p className="text-lg mb-6">
           No install. No nonsense. Just beautiful edits.
         </p>
         <Link to="/editor">
