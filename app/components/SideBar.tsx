@@ -1,36 +1,56 @@
+// components/SideBar.tsx
 import { Button } from "../components/ui/button";
 import { Crop, RotateCcw, Type, Square, Image } from "lucide-react";
+import { useToolStore } from "../lib/toolStore";
+import clsx from "clsx";
 
-interface SideBarProps {
-  onCrop: () => void;
-  onRotate: () => void;
-  onAddText: () => void;
-  onDrawShape: () => void;
-  onApplyFilter: () => void;
-}
+export default function SideBar() {
+  const { activeTool, setTool } = useToolStore();
 
-export default function SideBar({
-  onCrop,
-  onRotate,
-  onAddText,
-  onDrawShape,
-  onApplyFilter,
-}: SideBarProps) {
+  const handleClick = (tool: typeof activeTool) => {
+    setTool(activeTool === tool ? null : tool);
+  };
+
   return (
     <aside className="w-20 flex flex-col gap-4 items-center py-4 border-r bg-card">
-      <Button size="icon" variant="ghost" onClick={onCrop}>
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => handleClick("crop")}
+        className={clsx({ "bg-muted": activeTool === "crop" })}
+      >
         <Crop className="h-5 w-5" />
       </Button>
-      <Button size="icon" variant="ghost" onClick={onRotate}>
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => handleClick("rotate")}
+        className={clsx({ "bg-muted": activeTool === "rotate" })}
+      >
         <RotateCcw className="h-5 w-5" />
       </Button>
-      <Button size="icon" variant="ghost" onClick={onAddText}>
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => handleClick("text")}
+        className={clsx({ "bg-muted": activeTool === "text" })}
+      >
         <Type className="h-5 w-5" />
       </Button>
-      <Button size="icon" variant="ghost" onClick={onDrawShape}>
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => handleClick("shape")}
+        className={clsx({ "bg-muted": activeTool === "shape" })}
+      >
         <Square className="h-5 w-5" />
       </Button>
-      <Button size="icon" variant="ghost" onClick={onApplyFilter}>
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => handleClick("filter")}
+        className={clsx({ "bg-muted": activeTool === "filter" })}
+      >
         <Image className="h-5 w-5" />
       </Button>
     </aside>

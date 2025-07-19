@@ -1,17 +1,19 @@
 // src/components/CanvasRenderer.tsx
 import { useEffect, useRef } from "react";
 import { useImageStore } from "../../lib/imageStore";
-import { useCanvasTools } from "../../lib/useCanvasTools";
+import { useToolStore } from "../../lib/toolStore";
 
 export default function CanvasRenderer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const image = useImageStore((state) => state.image);
-  const { activeTool } = useCanvasTools();
+  const { activeTool } = useToolStore();
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx || !image) return;
+    if (!canvas || !image) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     const container = canvas.parentElement;
     if (!container) return;
@@ -30,32 +32,81 @@ export default function CanvasRenderer() {
     canvas.height = height;
 
     ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(image, 0, 0, width, height);
 
-    // Apply active tool operations here
+    // === Apply transformations based on activeTool ===
     switch (activeTool) {
       case "crop":
-        // Implement crop logic
+        // Demo crop to center square region
+        const cropSize = Math.min(image.width, image.height) / 2;
+        ctx.drawImage(
+          image,
+          image.width / 4,
+          image.height / 4,
+          cropSize,
+          cropSize,
+          0,
+          0,
+          width,
+          height
+        );
         break;
+
       case "rotate":
-        // Implement rotate logic
+        ctx.save();
+        ctx.translate(width / 2, height / 2);
+        ctx.rotate((90 * Math.PI) / 180); // 90 degrees rotation
+        ctx.drawImage(image, -width / 2, -height / 2, width, height);
+        ctx.restore();
         break;
+
       case "flip":
-        // Implement flip logic
+        ctx.save();
+        ctx.translate(width, 0);
+        ctx.scale(-1, 1); // horizontal flip
+        ctx.drawImage(image, 0, 0, width, height);
+        ctx.restore();
         break;
+
       case "grayscale":
-        // Implement grayscale filter logic
+        ctx.drawImage(image, 0, 0, width, height);
+        const imgData = ctx.getImageData(0, 0, width, height);
+        for (let i = 0; i < imgData.data.length; i += 4) {
+          const avg =
+            (imgData.data[i] + imgData.data[i + 1] + imgData.data[i + 2]) / 3;
+          imgData.data[i] = imgData.data[i + 1] = imgData.data[i + 2] = avg;
+        }
+        ctx.putImageData(imgData, 0, 0);
         break;
+
       case "text":
-        // Implement add text logic
+        ctx.drawImage(image, 0, 0, width, height);
+        ctx.font = "24px Arial";
+        ctx.fillStyle = "red";
+        ctx.fillText("Hello 👋", width / 2 - 40, height / 2); // hardcoded position
         break;
+
       case "shape":
-        // Implement draw shape logic
+        ctx.drawImage(image, 0, 0, width, height);
+        ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
+        ctx.fillRect(width / 4, height / 4, 100, 100); // example blue square
         break;
+
       default:
+        ctx.drawImage(image, 0, 0, width, height); // default render
         break;
     }
   }, [image, activeTool]);
 
-  return <canvas ref={canvasRef} style={{ width: "auto", height: "auto" }} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        width: "100%",
+        height: "auto",
+        maxWidth: "100%",
+        display: "block",
+        borderRadius: "8px",
+      }}
+    />
+  );
 }

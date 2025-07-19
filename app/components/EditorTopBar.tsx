@@ -5,8 +5,11 @@ import { Upload, Download, Undo2, Redo2 } from "lucide-react";
 import ThemeToggle from "./theme/ThemeToggle";
 import { useImageStore } from "../lib/imageStore";
 import imageCompression from "browser-image-compression";
+import { useHistoryStore } from "../lib/historyStore";
 
 export default function EditorTopBar() {
+  const undo = useHistoryStore((s) => s.undo);
+  const redo = useHistoryStore((s) => s.redo);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setImage = useImageStore((state) => state.setImage);
 
@@ -56,10 +59,10 @@ export default function EditorTopBar() {
         <Button variant="outline">
           <Download className="h-4 w-4 mr-1" /> Export
         </Button>
-        <Button variant="ghost">
+        <Button variant="ghost" onClick={undo}>
           <Undo2 className="h-4 w-4" />
         </Button>
-        <Button variant="ghost">
+        <Button variant="ghost" onClick={redo}>
           <Redo2 className="h-4 w-4" />
         </Button>
         <ThemeToggle />
